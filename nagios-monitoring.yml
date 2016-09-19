@@ -1,5 +1,0 @@
----
-- hosts: hosts:all_containers
-    
-  roles:
-    - nagios-monitoring
