@@ -1,0 +1,12 @@
+---
+
+# Playbook to use vagrant to stop the VM and then bring it up again, required after initial
+# update as the kernal will have been updated.  Note simpy trigger a reboot from within 
+# the VM will restart it, but then the Vagrant disk mappings will not work so Vagrant must
+# be used to control the restart
+
+- name: shutdown
+  local_action: command vagrant halt {{ ansible_hostname }}
+
+- name: start
+  local_action: command vagrant up {{ ansible_hostname }}

@@ -1,0 +1,15 @@
+.htaccess
+css.php
+rpc/
+sites/site*/admin/
+sites/site*/private/
+sites/site*/public/admin/
+sites/site*/public/setup/
+sites/site*/public/theme/
+textpattern/
+log/
+.vagrant/
+.DS_Store
+roles/st2-copy-key/files/stanley_rsa.pub
+HISTORY.txt
+README.txt

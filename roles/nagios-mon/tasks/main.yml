@@ -1,0 +1,210 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: 
+    - update
+
+- name: Install  Packages
+  package: name={{ item }} state=present
+  with_items:
+    - nagios-plugins
+    - nagios-nrpe-server
+  tags:
+    - packages
+
+- name: Update NRPE config
+  lineinfile:
+    dest: /etc/nagios/nrpe.cfg
+    regexp: allowed_hosts=127.0.0.1
+    line: allowed_hosts=127.0.0.1,{{nagios_ipv4_ip}}
+  notify: restart nrpe
+  tags: 
+    - nrpe
+
+- name: Add nrpe.d config files for containers
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: total_procs.cfg }
+  when: inventory_hostname != "aio"
+  notify: restart nrpe
+  tags: 
+    - containers
+
+- name: Add nrpe.d config files for AIO
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: sda1.cfg }
+    - { config_file: sdb1.cfg }
+    - { config_file: sdb2.cfg }
+    - { config_file: total_procs_aio.cfg }
+  when: inventory_hostname == "aio"
+  notify: restart nrpe
+  tags: 
+    - aio
+
+- name: Add nrpe.d config files for Ceilometer-API container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: ceilometer_api_container.cfg }
+  when: inventory_hostname | search("ceilometer_api_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - ceilometer_api
+
+- name: Add nrpe.d config files for Cinder-API container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: cinder_api_container.cfg }
+  when: inventory_hostname | search("cinder_api_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - cinder_api
+
+- name: Add nrpe.d config files for AODH container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: aodh_container.cfg }
+  when: inventory_hostname | search("aodh_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - aodh
+
+- name: Add nrpe.d config files for Ceilometer Collector container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: ceilometer_collector_container_commands.cfg }
+  when: inventory_hostname | search("ceilometer_collector_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - ceilometer_collector
+
+- name: Add nrpe.d config files for Cinder Scheduler container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: cinder_scheduler_container_commands.cfg }
+  when: inventory_hostname | search("cinder_scheduler_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - cinder_scheduler
+
+- name: Add nrpe.d config files for Galera container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: galera_container_commands.cfg }
+  when: inventory_hostname | search("galera_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - galera
+
+- name: Add nrpe.d config files for Glance container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: glance_container_commands.cfg }
+  when: inventory_hostname | search("glance_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - glance
+
+- name: Add nrpe.d config files for Heat APIs container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: heat_apis_container_commands.cfg }
+  when: inventory_hostname | search("heat_apis_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - heat_apis
+
+- name: Add nrpe.d config files for Heat Engine container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: heat_engine_container_commands.cfg }
+  when: inventory_hostname | search("heat_engine_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - heat_engine
+
+- name: Add nrpe.d config files for Horizon container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: horizon_container_commands.cfg }
+  when: inventory_hostname | search("horizon_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - horizon
+
+- name: Add nrpe.d config files for Keystone container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: keystone_container_commands.cfg }
+  when: inventory_hostname | search("keystone_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - keystone
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx

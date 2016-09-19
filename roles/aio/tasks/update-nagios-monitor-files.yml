@@ -1,0 +1,78 @@
+---
+
+# Create a 'files' folder on the AIO VM to store the configuration files
+- name: Create files Folder
+  file: path=/opt/openstack-ansible/playbooks/files state=directory mode=0755
+  tags: 
+    - create_files_folder
+    - nagios_monitoring_files
+    - nagios
+
+# We copy these files over to the AIO VM so that it can update them with the IP for the Container as their IPs are
+# randomly allocated when the containers are created.
+- name: Copy Nagios Monitoring config files
+  copy: src=files/{{ item.config_file }} dest=/opt/openstack-ansible/playbooks/files/{{ item.config_file}}
+  with_items:
+    - { config_file: ceilometer_api_container.cfg }
+    - { config_file: cinder_api_container.cfg }
+    - { config_file: aodh_container.cfg }
+    - { config_file: ceilometer_collector_container_monitors.cfg }
+    - { config_file: cinder_scheduler_container_monitors.cfg }
+    - { config_file: galera_container_monitors.cfg }
+    - { config_file: glance_container_monitors.cfg }
+    - { config_file: heat_apis_container_monitors.cfg }
+    - { config_file: heat_engine_container_monitors.cfg }
+    - { config_file: horizon_container_monitors.cfg }
+    - { config_file: keystone_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+
+  tags: 
+    - copy_configuration_files
+    - nagios_monitoring_files
+    - update_nagios_monitoring_files
+    - nagios
+
+# This is the playbook which will run on the AIO VM to update the files
+- name: Copy update-nagios-monitor-files.yml
+  copy: src=update-nagios-monitor-files.yml dest=/opt/openstack-ansible/playbooks/update-nagios-monitor-files.yml
+  tags: 
+    - copy_update_nagios_monitor_files_yml
+    - nagios_monitoring_files
+    - update_nagios_monitoring_files
+    - nagios
+
+- name: Run update-nagios-monitor-files.yml Playbook
+  shell: openstack-ansible update-nagios-monitor-files.yml chdir=/opt/openstack-ansible/playbooks/
+  changed_when: false
+  tags: 
+    - run_update_nagios_monitor_files_playbook
+    - nagios_monitoring_files
+    - update_nagios_monitoring_files
+    - nagios
+
+# Fetch the updated files back so they can then by used by the Nagios Role
+- name: Fetch the updated configuration files
+  fetch: src=/opt/openstack-ansible/playbooks/files/{{ item.config_file }} dest=files/{{ item.config_file }} flat=yes fail_on_missing=yes validate_checksum=yes
+  with_items:
+    - { config_file: ceilometer_api_container.cfg }
+    - { config_file: cinder_api_container.cfg }
+    - { config_file: aodh_container.cfg }
+    - { config_file: ceilometer_collector_container_monitors.cfg }
+    - { config_file: cinder_scheduler_container_monitors.cfg }
+    - { config_file: galera_container_monitors.cfg }
+    - { config_file: glance_container_monitors.cfg }
+    - { config_file: heat_apis_container_monitors.cfg }
+    - { config_file: heat_engine_container_monitors.cfg }
+    - { config_file: horizon_container_monitors.cfg }
+    - { config_file: keystone_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+  #  - { config_file: xxx_container_monitors.cfg }
+  tags:  
+    - fetch_configuration_files
+    - nagios_monitoring_files
+    - update_nagios_monitoring_files
+    - nagios
+

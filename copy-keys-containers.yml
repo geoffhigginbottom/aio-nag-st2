@@ -1,0 +1,6 @@
+---
+- hosts: all_containers
+  sudo: True
+  remote_user: root
+  roles:
+    - copy-keys-containers

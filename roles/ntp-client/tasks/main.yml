@@ -1,0 +1,21 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: update
+  
+- name: Ensure NTP is installed
+  apt: name=ntp state=present
+  
+- name: Ensure NTP is running and set to auto start
+  service: name=ntp state=started enabled=yes
+  
+- name: configure ntp.conf
+  template: src=ntp.conf dest=/etc/ntp.conf
+  notify: restart ntp

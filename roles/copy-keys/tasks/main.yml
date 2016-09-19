@@ -1,0 +1,8 @@
+---
+
+# add your public key into each VMs authorized_key file so it can be accessed 
+# directly via 'ssh root@vm_name' (in addition to 'vagrant ssh vm_name' which uses the vagrant key)
+# This allows easy access for Ansible and also for testing and trouble shooting
+- name: Add Authorised Key Root User
+  authorized_key: user=root key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  tags: auth_key

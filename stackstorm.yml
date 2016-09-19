@@ -1,0 +1,12 @@
+---
+- hosts: stackstorm
+  roles:
+    - mongodb
+    - rabbitmq
+    - st2repos
+    - mistral
+    - st2
+    - st2web
+    - st2smoketests
+    - st2pack
+    - st2-fetch-key

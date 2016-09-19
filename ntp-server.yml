@@ -1,0 +1,5 @@
+---
+- hosts: ntp-server
+    
+  roles:
+    - ntp-server

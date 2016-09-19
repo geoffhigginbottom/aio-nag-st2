@@ -1,0 +1,32 @@
+---
+
+- name: Create Folders
+  file: path={{item}} state=directory mode=0755
+  with_items:
+      - /opt/openstack-ansible/playbooks/roles/st2-copy-key
+  tags: 
+    - st2_copy_key_folders
+    - st2_copy_key
+    - st2
+
+- name: Copy 'st2-copy-key' Role
+  copy: src=roles/st2-copy-key/ dest=/opt/openstack-ansible/playbooks/roles/st2-copy-key/
+  tags: 
+    - copy_keys_role
+    - st2_copy_key
+    - st2
+
+- name: Copy st2-copy-key.yml
+  copy: src=st2-copy-key.yml dest=/opt/openstack-ansible/playbooks/st2-copy-key.yml
+  tags: 
+    - st2_copy_key_yml
+    - st2_copy_key
+    - st2
+
+- name: Run st2-copy-key Playbook
+  shell: openstack-ansible st2-copy-key.yml chdir=/opt/openstack-ansible/playbooks/
+  changed_when: false
+  tags: 
+    - run_st2_copy_key_playbook
+    - st2_copy_key
+    - st2

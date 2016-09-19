@@ -1,0 +1,15 @@
+---
+# 'stable' to get latest version or numeric like '1.4.0'
+st2_version: stable
+# used only if 'st2_version' is numeric
+st2_revision: 1
+
+st2_system_user: stanley
+st2_ssh_key_file: /home/{{ st2_system_user }}/.ssh/{{ st2_system_user }}_rsa
+
+enable_auth: true
+st2_auth_username: testu
+st2_auth_password: testp
+
+# Set to no if you do not want the st2_system_user to be added in the sudoers file
+st2_system_user_in_sudoers: yes

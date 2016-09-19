@@ -1,0 +1,18 @@
+---
+
+# create a user 'stanley' so StackStorm server can connect and run commands
+- name: create user stanley
+  user: name=stanley comment="ST2 user" createhome=yes generate_ssh_key=yes
+  tags:
+    - st2_user
+
+# add the stanley public key from the StackStorm Server into the authorized_keys for local user stanley so the StackStorm server can connect and run commands
+- name: Add Authorised Key  
+  authorized_key: user=stanley key="{{ lookup('file', 'roles/st2-copy-key/files/stanley_rsa.pub') }}"
+  tags: auth_key
+
+# add stanley account to sudoers
+- name: Add stanley to sudoers
+  #command: sudo sh -c 'echo "stanley    ALL=(ALL)       NOPASSWD: SETENV: ALL" >> /etc/sudoers.d/st2
+  command: "sudo sh -c 'echo \"stanley    ALL=(ALL)       NOPASSWD: SETENV: ALL\" >> /etc/sudoers.d/st2'"
+  tags: sudoers

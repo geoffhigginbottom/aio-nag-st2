@@ -1,0 +1,5 @@
+---
+- hosts: all_containers:hosts
+    
+  roles:
+    - st2-copy-key

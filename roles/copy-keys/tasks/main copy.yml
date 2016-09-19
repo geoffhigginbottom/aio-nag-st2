@@ -1,0 +1,37 @@
+---
+
+- name: Create ssh folder
+  file: path=/usr/local/nagios/.ssh state=directory mode=0755
+  when: inventory_hostname == "nagios"
+  tags: ssh_folder
+
+# add your public key into the authorized_keys for user Nagios on the Nagios VM file so it can be accessed by user Nagios using SSH (used for testing)
+- name: Add Authorised Key  
+  authorized_key: user=nagios key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  when: inventory_hostname == "nagios"
+  tags: auth_key
+
+# copy your public key to the AIO VM so it can then be used to allow access to the containers from the Nagios VM 
+# it gets copied by copy-keys-containers playbook which is run from the AIO VM later on
+# by using your keys it saves having to store keys in the playbook
+- name: Copy Public Key
+  copy: src=~/.ssh/id_rsa.pub dest=~/.ssh/id_rsa_cont.pub
+  when: inventory_hostname == "aio"
+  tags: public_key
+
+# add your public key into each VMs authorized_key file so it can be accessed directly via 'ssh root@vm_name' as well as 'vagrant ssh vm_name'
+- name: Add Authorised Key Root User
+  authorized_key: user=root key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  tags: auth_key
+
+# add your public key into the authorized_keys for user Nagios on the AIO VM file so it can be accessed by Nagios VM using SSH
+- name: Add Authorised Key Nagios User 
+  authorized_key: user=nagios key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  when: inventory_hostname == "aio"
+  tags: auth_key
+
+# copy your local private key to the Nagios VM so it can then be used to gain access to the AIO VM which has already authorised this private key
+- name: Copy Private Key
+  copy: src=~/.ssh/id_rsa dest=/usr/local/nagios/.ssh/id_rsa
+  when: inventory_hostname == "nagios"
+  tags: public_key

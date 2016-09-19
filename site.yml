@@ -1,0 +1,11 @@
+---
+
+- include: update.yml
+- include: copy-keys.yml
+- include: restart.yml
+- include: ntp-server.yml
+- include: ntp-client.yml
+- include: stackstorm.yml
+- include: aio.yml
+- include: nagios.yml
+- include: nagios-mon.yml

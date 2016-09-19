@@ -1,0 +1,4 @@
+---
+  
+- name: st2-register-rules
+  command: st2ctl reload --register-rules

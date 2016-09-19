@@ -1,0 +1,13 @@
+---
+
+- name: restart apache
+  sudo: true
+  service: name=apache2 state=restarted
+
+- name: restart xinetd
+  sudo: true
+  service: name=xinetd state=restarted
+
+- name: restart nagios
+  sudo: true
+  service: name=nagios state=restarted

@@ -1,0 +1,25 @@
+---
+
+name: start_service
+pack: nagios
+description: Start a service for a failed process on host
+enabled: true
+
+trigger:
+  type: nagios.service_state_change
+
+criteria:
+  trigger.state_type:
+    type: equals
+    pattern: "HARD"
+  trigger.state:
+    type: equals
+    pattern: "CRITICAL"
+
+action:
+  ref: linux.service
+  parameters:
+    sudo: "true"
+    hosts: "{{trigger.hostaddress}}"
+    service: "{{trigger.service}}"
+    act: "start"

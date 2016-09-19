@@ -1,0 +1,17 @@
+---
+
+- name: Create Pack folders
+  file: path={{item.path}} state=directory mode={{item.mode}} group={{item.group}} owner={{item.owner}}
+  with_items:
+    - { path: /opt/stackstorm/packs/nagios, mode: 775, group: st2packs, owner: root}
+    - { path: /opt/stackstorm/packs/nagios/rules, mode: 775, group: st2packs, owner: root}
+  tags: 
+    - st2_pack_folders
+    - st2_pack
+
+- name: Copy nagios_service_start.yaml to StackStorm Server 
+  copy: src=roles/st2pack/files/nagios_service_start.yaml dest=/opt/stackstorm/packs/nagios/rules/nagios_service_start.yaml owner=root group=st2packs mode=774
+  notify: st2-register-rules
+  tags:
+    - st2_pack_rules
+    - st2_pack

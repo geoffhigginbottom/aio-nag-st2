@@ -1,0 +1,34 @@
+---
+
+aio_ipv4_ip: 172.29.236.100
+ntp_server_ip: 172.29.236.100
+ntp_allow_ip_range: 172.29.236.0
+ntp_allow_mask: 255.255.252.0
+
+openstack_ansible_version: 13.2.0
+ansible_min_version: 2.1
+
+nagios_ipv4_ip: 172.29.236.101
+nagios_version: 4.2.0
+nagios_tarball: https://assets.nagios.com/downloads/nagioscore/releases/nagios-{{nagios_version}}.tar.gz
+nagios_plugins_version: 2.1.2
+nagios_plugin_tarball: https://www.nagios-plugins.org/download/nagios-plugins-{{nagios_plugins_version}}.tar.gz
+nagios_nrpe_version: 2.15
+nagios_nrpe_tarball: https://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe-{{nagios_nrpe_version}}/nrpe-{{nagios_nrpe_version}}.tar.gz
+nagios_build_directory: /tmp
+nagios_password: nagiosadmin
+nagios_user: nagiosadmin
+nagios_admin_email: geoff.higginbottom@rackspace.co.uk
+nagios_admin_name: 'Nagios Admin'
+nagios_host: nagios.local
+nagios_log_directory: /var/log
+nagios_ssl_cert_pem: /etc/apache2/ssl/nagios.pem
+nagios_ssl_cert_key: /etc/apache2/ssl/nagios.key
+
+st2_api_key:
+st2_username: testu
+st2_password: testp
+st2_api_base_url: https://172.29.236.102/api/v1/
+st2_auth_base_url: https://172.29.236.102/auth/v1/
+st2_unauthed: False
+st2_ssl_verify: False

@@ -1,0 +1,73 @@
+---
+
+- name: Update Cache (if older than 3600 secs)
+  apt: update_cache=yes cache_valid_time=3600
+  tags: update
+
+- name: Install Git
+  apt: name=git state=present
+  tags: git
+
+# Later plays will modifiy the repo, so to enable the playbook to be re-run without git erroring with the message "Local modifications exist in repository" we only 
+# clone the repo if it has not already been cloned, so first we test for its presence, then only clone if it does not already exist
+- name: Git Test
+  stat: path=/opt/openstack-ansible
+  register: repo
+  tags: git
+
+- name: Clone OpenStack Ansible Repo
+  git: repo=https://github.com/openstack/openstack-ansible.git dest=/opt/openstack-ansible recursive=yes version={{ openstack_ansible_version }}
+  when: not (repo.stat.isdir is defined and repo.stat.isdir)
+  tags: 
+    - git
+
+- name: Change bootstrap_host_bridge_mgmt_ports to eth1
+  lineinfile: dest=/opt/openstack-ansible/tests/roles/bootstrap-host/defaults/main.yml regexp=bootstrap_host_bridge_mgmt_ports line='bootstrap_host_bridge_mgmt_ports{{':'}} eth1'
+  tags: ports
+
+- name: Change bootstrap_host_bridge_storage_ports to eth1
+  lineinfile: dest=/opt/openstack-ansible/tests/roles/bootstrap-host/defaults/main.yml regexp=bootstrap_host_bridge_storage_ports line='bootstrap_host_bridge_storage_ports{{':'}} eth1'
+  tags: ports
+
+- name: Change bootstrap_host_bridge_vxlan_ports to eth2
+  lineinfile: dest=/opt/openstack-ansible/tests/roles/bootstrap-host/defaults/main.yml regexp=bootstrap_host_bridge_vxlan_ports line='bootstrap_host_bridge_vxlan_ports{{':'}} eth2'
+  tags: ports
+
+- name: Bootstrap Ansible
+  shell: ./scripts/bootstrap-ansible.sh args1 args2
+  args:
+    chdir: /opt/openstack-ansible
+    creates: /opt/ansible_v*
+  environment: 
+    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb host_data_disk_min_size_bytes=0
+  tags: bootstrap-ansible
+  
+- name: Bootstrap AIO
+  shell: ./scripts/bootstrap-aio.sh args1 args2
+  args:
+    chdir: /opt/openstack-ansible
+    creates: /etc/openstack_deploy
+  environment: 
+    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb host_data_disk_min_size_bytes=0
+  tags: bootstrap-aio
+
+# adds an exclusion to /etc/openstack_deploy/openstack_user_config.yml to ensure the IPs used by AIO, Nagios and Stackstorm VMs are not allocated to Containers
+- name: Add IP exception for VMs
+  lineinfile: dest=/etc/openstack_deploy/openstack_user_config.yml  insertafter='  - "172.29.248.1,172.29.248.50"' line='  - "172.29.236.100,172.29.236.102"'
+  tags: ip_exception
+
+- name: Change external_lb_vip_address in /etc/openstack_deploy/openstack_user_config.yml
+  lineinfile: dest=/etc/openstack_deploy/openstack_user_config.yml regexp=external_lb_vip_address line='  external_lb_vip_address{{':'}} "172.29.236.100"'
+  tags: vip_address
+
+# Disable security hardening as this is a test environment and not production
+- name: Disable Security Hardening
+  lineinfile: dest=/etc/openstack_deploy/user_variables.yml regexp=apply_security_hardening line='apply_security_hardening{{':'}} false'
+  tags: security_hardening
+
+- name: Run Playbooks
+  shell: ./scripts/run-playbooks.sh args1 args2
+  args:
+    chdir: /opt/openstack-ansible
+    creates: /etc/openstack_deploy/ansible_facts
+  tags: run-playbooks

@@ -1,0 +1,492 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: update
+
+- name: Install  Packages
+  package: name={{ item }} state=present
+  with_items:
+    - apache2
+    - libapache2-mod-php5
+    - php5
+    - apache2-utils
+    - build-essential
+    - libgd2-xpm-dev
+    - openssl
+    - libssl-dev
+    - xinetd
+    - unzip
+    - python-passlib
+    - python-pip
+    - sendmail-bin
+    - sendmail
+  tags:
+     - packages
+
+- name: enable apache rewrite
+  command: "a2enmod rewrite"
+  tags: apache
+
+- name: enable apache cgi
+  command: "a2enmod cgi"
+  tags: apache
+
+# Create nagios user and groups
+- name: create nagios group
+  group: >
+    gid=3000
+    name=nagios
+  tags: users_and_groups
+
+- name: create nagioscmd group
+  group: >
+    gid=3001
+    name=nagioscmd
+  tags: users_and_groups
+
+- name: create nagios user
+  user: >
+    uid=3000
+    group=nagios
+    groups=nagioscmd
+    name=nagios
+    home=/usr/local/nagios
+    comment="Nagios User"
+  tags: users_and_groups
+
+- name: add user www-data to nagioscmd group
+  user: >
+    groups=nagioscmd
+    name=www-data
+  tags: users_and_groups
+
+- name: add user cgi to nagios group
+  user: >
+    groups=nagios
+    name=cgi
+  tags: users_and_groups
+
+# get_url function downloads the package to compare with any existing, so it effectively runs every time even if package has already
+# been downloaded.  The tarball test checks if the file exsits, and if it does, do not bother downloading again - speeds up subsequent runs
+- name: Tarball Test
+  stat: path={{nagios_build_directory}}/nagios-{{nagios_version}}.tar.gz
+  register: st
+  tags: 
+    - tarball
+
+- debug: var=st verbosity=1
+  tags: 
+    - tarball
+
+- name: download nagios tarball
+  get_url: >
+    dest={{nagios_build_directory}}
+    url={{nagios_tarball}}
+  when: not (st.stat.exists is defined and st.stat.exists)
+  tags: tarball
+
+- name: Extract nagios tarball
+  unarchive: src={{nagios_build_directory}}/nagios-{{nagios_version}}.tar.gz dest={{nagios_build_directory}} copy=no creates={{nagios_build_directory}}/nagios-{{nagios_version}}
+  tags: tarball
+
+- name: Configure Nagios
+  command: "./configure --prefix=/usr/local/nagios --with-nagios-user=nagios --with-nagios-group=nagios --with-command-user=nagios --with-command-group=nagioscmd chdir={{nagios_build_directory}}/nagios-{{nagios_version}} creates={{nagios_build_directory}}/nagios-{{nagios_version}}/config.log"
+  tags: configure
+
+- name: Nagios Make
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+  tags: nagios_make
+
+- name: Nake All Test
+  stat: path={{nagios_build_directory}}/nagios-{{nagios_version}}/module/helloworld.o
+  register: st
+  tags: 
+    - nagios_make_all
+
+- debug: var=st verbosity=1
+  tags: 
+    - nagios_make_all
+
+- name: Nagios Make All
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+    target: all
+  when: not (st.stat.exists is defined and st.stat.exists)
+  tags: nagios_make_all
+
+- name: Nagios Make Install
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+    target: install
+  tags: nagios_make_install
+
+- name: Nagios Make Install-Commamndmode
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+    target: install-commandmode
+  tags: nagios_make_install_commandmode
+
+- name: Nagios Make Install-Init
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+    target: install-init
+  tags: nagios_make_install_init
+
+- name: Nagios Make Install-Config
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-{{nagios_version}}"
+    target: install-config
+  tags: nagios_make_install_config
+
+- name: Install Nagios
+  command: "/usr/bin/install -c -m 644 sample-config/httpd.conf /etc/apache2/sites-available/nagios.conf chdir={{nagios_build_directory}}/nagios-{{nagios_version}}"
+  tags: install_nagios
+
+- name: Enable nagios vhost
+  command: "a2ensite nagios"
+  tags: nagios_site
+
+- name: Enable nagios start on boot
+  service: name=nagios enabled=yes
+  tags: nagios_service
+
+- name: Sdd passwords for nagios
+  htpasswd: >
+    name="{{nagios_user}}"
+    password="{{nagios_password}}"
+    path=/usr/local/nagios/etc/htpasswd.users
+  notify: restart apache
+  tags: apache_passwords
+
+- name: Set permissions on password file
+  file: >
+    path=/usr/local/nagios/etc/htpasswd.users
+    owner=nagios
+    group=nagioscmd
+  tags: apache_passwords
+
+###  Plugins ###
+
+- name: Tarball Test
+  stat: path={{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}.tar.gz
+  register: st
+  tags: 
+    - plugins_tarball
+    - plugins
+
+- debug: var=st verbosity=1
+  tags: 
+    - plugins_tarball
+    - plugins
+
+- name: Download nagios plugins tarball
+  get_url: >
+    dest="{{nagios_build_directory}}"
+    url={{nagios_plugin_tarball}}
+  when: not (st.stat.exists is defined and st.stat.exists)
+  tags: 
+    - plugins_tarball
+    - plugins
+
+- name: Extract nagios plugins tarball
+  unarchive: src={{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}.tar.gz dest={{nagios_build_directory}} copy=no creates={{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}
+  tags: 
+    - plugins_tarball
+    - plugins
+
+- name: Configure Plugins
+  command: "./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl chdir={{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}"
+  tags: 
+    - configure_plugins
+    - plugins
+
+- name: Plugins Make
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}"
+  tags:
+      - plugins_make
+      - plugins
+
+- name: Plugins Make Install
+  make: 
+    chdir: "{{nagios_build_directory}}/nagios-plugins-{{nagios_plugins_version}}"
+    target: install
+  tags: 
+    - plugins_make_install
+    - plugins
+
+
+### NRPE ###
+
+- name: Tarball Test
+  stat: path={{nagios_build_directory}}/{{nagios_nrpe_tarball}}.tar.gz
+  register: st
+  tags: 
+    - nrpe_tarball
+    - nrpe
+
+- debug: var=st verbosity=1
+  tags: 
+    - nrpe_tarball
+    - nrpe
+
+- name: Download nagios NRPE tarball
+  get_url: >
+    dest={{nagios_build_directory}}
+    url={{nagios_nrpe_tarball}}
+  when: not (st.stat.exists is defined and st.stat.exists)
+  tags: 
+    - nrpe_tarball
+    - nrpe
+
+- name: Extract nagios NRPE tarball
+  unarchive: src={{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}.tar.gz dest={{nagios_build_directory}} copy=no creates={{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}
+  tags: 
+    - nrpe_tarball
+    - nrpe
+
+- name: NRPE Configure
+  command: "./configure --enable-command-args --with-nagios-user=nagios --with-nagios-group=nagios --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu chdir={{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}" 
+  args: 
+    creates: "{{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}/config.status"
+  tags: 
+    - nrpe_configure
+    - nrpe
+
+- name: NRPE Make All
+  make: 
+    chdir: "{{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}"
+    target: all
+  tags: 
+    - nrpe_make_all
+    - nrpe
+
+- name: NRPE Make Install
+  make: 
+    chdir: "{{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}"
+    target: install
+  tags: 
+    - nrpe_make_install
+    - nrpe
+
+- name: NRPE Make Install Xinetd
+  make: 
+    chdir: "{{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}"
+    target: install-xinetd
+  tags:  
+    - nrpe_make_install_xinetd
+    - nrpe
+
+- name: NRPE Make Install Daemon Config
+  make: 
+    chdir: "{{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}"
+    target: install-daemon-config
+  tags:  
+    - nrpe_make_install_daemon_config
+    - nrpe
+
+- name: Update Xinetd Config
+  lineinfile: dest=/etc/xinetd.d/nrpe regexp="only_from       = 127.0.0.1" line="        only_from       = 127.0.0.1 {{nagios_ipv4_ip}}"
+  notify: restart xinetd
+  tags: 
+    - xinetd_config
+    - nrpe
+
+- name: Updte Nagios Config
+  lineinfile: dest=/usr/local/nagios/etc/nagios.cfg regexp="#cfg_dir=/usr/local/nagios/etc/servers" line="cfg_dir=/usr/local/nagios/etc/servers"
+  notify: nagios restart
+  tags: 
+    - nagios_nrpe_config
+    - nrpe
+
+
+### Nagios Config ###
+
+- name: Create Server Folder
+  file: path=/usr/local/nagios/etc/servers state=directory mode=0755 group=nagios owner=nagios
+  notify: nagios restart
+  tags: 
+    - nagios_servers_folder
+    - nagios_config
+
+- name: Update Nagios Admin e-mail
+  lineinfile: dest=/usr/local/nagios/etc/objects/contacts.cfg regexp="mail" line="        email                           {{nagios_admin_email}}"
+  notify: restart nagios
+  tags: 
+    - nagios_admin_email
+    - nagios_config
+
+- name: Enable NRPE Collection
+  blockinfile: 
+    dest: /usr/local/nagios/etc/objects/commands.cfg
+    marker: "### {mark} ANSIBLE MANAGED BLOCK NRPE ###"
+    insertafter: EOF
+    regexp: command_name check_nrpe
+    block: |
+      # 'nrpe' command definition
+      define command{
+              command_name check_nrpe
+              command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$ $ARG2$ $ARG3$
+              }  
+  notify: restart nagios
+  tags: 
+    - nagios_enable_nrpe
+    - nagios_config
+
+- name: Add OpenStack Templates
+  blockinfile:
+    dest: /usr/local/nagios/etc/objects/templates.cfg
+    regexp: "# OPENSTACK TEMPLATES"
+    block: |
+      ###############################################################################
+      ###############################################################################
+      #
+      # OPENSTACK TEMPLATES
+      #
+      ###############################################################################
+      ###############################################################################
+
+      # AIO Container host definition template - This is NOT a real host, just a template!
+
+      define host{
+             name                            aio-container
+             use                             generic-host
+             check_period                    24x7
+             check_interval                  1
+             retry_interval                  1
+             max_check_attempts              10
+             check_command                   check-host-alive
+             notification_period             workhours
+             notification_interval           120
+             notification_options            d,u,r
+             contact_groups                  admins
+             register                        0
+             }
+
+      # OpenStack Service definition template - This is NOT a real host, just a template!
+
+      define service{
+            name                            openstack-service
+            active_checks_enabled           1
+            passive_checks_enabled          1
+            parallelize_check               1
+            obsess_over_service             1
+            check_freshness                 0
+            event_handler_enabled           1
+            event_handler                   st2nagios
+            flap_detection_enabled          1
+            process_perf_data               1
+            retain_status_information       1
+            retain_nonstatus_information    1
+            is_volatile                     0
+            check_period                    24x7
+            max_check_attempts              3
+            normal_check_interval           0.25
+            retry_check_interval            0.25
+            contact_groups                  admins
+            notifications_enabled           1
+            notification_options            w,u,c,r
+            notification_interval           60
+            notification_period             24x7
+            register                        0
+            }
+  notify: restart nagios
+  tags: 
+    - nagios_add_template
+    - nagios_config
+
+- name: Copy Nagios Monitoring config files
+  copy: src=files/{{ item.config_file }} dest=/usr/local/nagios/etc/servers/{{ item.config_file }}
+  with_items:
+    - { config_file: cinder_api_container.cfg }
+    - { config_file: ceilometer_api_container.cfg }
+    - { config_file: aodh_container.cfg }
+    - { config_file: ceilometer_collector_container_monitors.cfg }
+    - { config_file: cinder_scheduler_container_monitors.cfg }
+    - { config_file: galera_container_monitors.cfg }
+    - { config_file: glance_container_monitors.cfg }
+    - { config_file: heat_apis_container_monitors.cfg }
+    - { config_file: heat_engine_container_monitors.cfg }
+    - { config_file: horizon_container_monitors.cfg }
+    - { config_file: keystone_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+  notify: restart nagios
+  tags: 
+    - nagios_monitoring_files
+
+
+- name: Copy AIO Nagios Monitoring config file
+  template: src={{ item.src }} dest={{ item.dest}}
+  with_items:
+    - { src: aio.cfg, dest: /usr/local/nagios/etc/servers/aio.cfg }
+  notify: restart nagios
+  tags: 
+    - nagios_monitoring_files
+
+### Nagios Event Handler for StackStorm ###
+
+- name: Upgrade requests package to latest version
+  pip: name=requests state=latest
+  tags: 
+    - pip_requests
+    - st2
+
+- name: Enable Event Handler for StackStorm
+  blockinfile: 
+    dest: /usr/local/nagios/etc/objects/commands.cfg
+    marker: "### {mark} ANSIBLE MANAGED BLOCK ST2 Event Handler ###"
+    insertafter: EOF
+    regexp: command_name st2nagios
+    block: |
+      # 'nagios event handler' command definition
+      define command{
+              command_name st2nagios
+              command_line /usr/local/nagios/libexec/st2service_handler.py /usr/local/nagios/libexec/st2service_handler.yaml $SERVICEEVENTID$ "$SERVICEDESC$" $SERVICESTATE$ $SERVICESTATETYPE$ $SERVICEATTEMPT$ $HOSTNAME$ $HOSTADDRESS$
+              }
+  notify: restart nagios
+  tags: 
+    - st2_enable_event_handler
+    - st2
+
+- name: Deploy st2service_handler.py
+  template: src=st2service_handler.py dest=/usr/local/nagios/libexec/st2service_handler.py group=nagios owner=nagios mode=0715
+  notify: restart nagios
+  tags:
+    - st2service_handler.py
+    - st2
+
+- name: Deploy st2service_handler.yaml
+  template: src=st2service_handler.yaml dest=/usr/local/nagios/libexec/st2service_handler.yaml group=nagios owner=nagios mode=0744
+  notify: restart nagios
+  tags:
+    - st2service_handler.yaml
+    - st2
+
+
+### Test Event Handler to create trigger and load rules on StackStorm Server ###
+
+- name: Test Event Handler
+  command: python st2service_handler.py st2service_handler.yaml 44534 3 WARNING HARD 4 test arg1
+  args: 
+    chdir: /usr/local/nagios/libexec/
+  tags:
+    - test_handler
+    - st2
+
+- name: st2-register-rules
+  command: st2ctl reload --register-rules
+  delegate_to: stackstorm
+  tags:
+    - st2_register_rules
+    - st2

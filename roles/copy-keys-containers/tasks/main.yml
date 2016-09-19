@@ -1,0 +1,11 @@
+---
+
+# add your public key into the authorized_keys for user root on the AIO VM file so it can be accessed directly using SSH
+- name: Add Root User Key  
+  authorized_key: user=root key="{{ lookup('file', '~/.ssh/id_rsa_cont.pub') }}"
+  tags: main
+
+# # add your public key into the authorized_keys for user Nagios on the AIO VM file so it can be accessed by Nagios using SSH
+# - name: Add Nagios User Key  
+#   authorized_key: user=nagios key="{{ lookup('file', '~/.ssh/id_rsa_cont.pub') }}"
+#   tags: main

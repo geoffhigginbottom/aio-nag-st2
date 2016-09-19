@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  description: Install custom OpenStack Mistral, patched by StackStorm
+  author: armab
+  company: StackStorm
+  license: Apache
+  min_ansible_version: 1.9.1
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+        - precise
+  categories:
+    - system
+dependencies:
+  - role: ANXS.postgresql
+    version: v1.2.1
+    tags: [db, postgresql]
+    sudo: yes
+    postgresql_databases:
+      - name: "{{ mistral_db }}"
+    postgresql_users:
+      - name: "{{ mistral_db_username }}"
+        pass: "{{ mistral_db_password }}"
+        encrypted: yes
+  - role: st2repos

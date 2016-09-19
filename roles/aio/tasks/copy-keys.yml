@@ -1,0 +1,42 @@
+---
+
+# copy your public key to the AIO VM so it can then be used to allow access to the containers from the Nagios VM 
+# it gets copied by copy-keys-containers playbook which is run from the AIO VM later on
+# by using your keys it saves having to store keys in the playbook
+- name: Copy Public Key
+  copy: src=~/.ssh/id_rsa.pub dest=~/.ssh/id_rsa_cont.pub
+  tags: 
+    - public_key
+    - copy_keys
+    - nagios
+
+- name: Create Folders
+  file: path={{item}} state=directory mode=0755
+  with_items:
+      - /opt/openstack-ansible/playbooks/roles/copy-keys-containers
+  tags: 
+    - copy_keys_folders
+    - copy_keys
+    - nagios
+
+- name: Copy 'Copy Keys' Role
+  copy: src=roles/copy-keys-containers/ dest=/opt/openstack-ansible/playbooks/roles/copy-keys-containers/
+  tags: 
+    - copy_keys_role
+    - copy_keys
+    - nagios
+
+- name: Copy copy-keys-containers.yml
+  copy: src=copy-keys-containers.yml dest=/opt/openstack-ansible/playbooks/copy-keys-containers.yml
+  tags: 
+    - copy_keys_containers_yml
+    - copy_keys
+    - nagios
+
+- name: Run copy-keys-containers Playbook
+  shell: openstack-ansible copy-keys-containers.yml chdir=/opt/openstack-ansible/playbooks/
+  changed_when: false
+  tags: 
+    - run_copy-keys-containers_playbook
+    - copy_keys
+    - nagios

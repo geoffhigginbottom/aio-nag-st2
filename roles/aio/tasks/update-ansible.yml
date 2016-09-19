@@ -1,0 +1,60 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: update_ansible
+
+- name: Install PPA
+  package: name={{ item }} state=present
+  with_items:
+   - software-properties-common
+  tags: packages-test
+
+- name: Add PPA Repo
+  apt_repository: repo='ppa:ansible/ansible'
+  tags: packages-test
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: update_ansible
+
+# We need Ansible to be version 2 or higher so we test current version and then upgrade if it is still at version 1.x
+- name: Test current version of Ansible
+  shell: "ansible --version | grep -m 1 ansible | tr -d 'ansible '"
+  register: result
+  changed_when: False
+  tags: update_ansible
+
+- name: Debug
+  debug: var=result.stdout verbosity=1
+  tags: update_ansible
+
+- name: Upgrade Required
+  debug: msg="upgrade required"
+  when: result.stdout < "{{ansible_min_version}}"
+  tags: update_ansible
+
+- name: Remove Current Ansible (pip)
+  pip: name=ansible state=absent
+  when: result.stdout < "{{ansible_min_version}}"
+  tags: update_ansible
+
+- name: Remove Current Ansible (apt)
+  package: name=ansible state=absent
+  when: result.stdout < "{{ansible_min_version}}"
+  tags: update_ansible
+
+- name: Install Latest Ansible
+  package: name=ansible state=present
+  when: result.stdout < "{{ansible_min_version}}"
+  tags: update_ansible

@@ -1,0 +1,7 @@
+---
+- hosts: vagrant
+  become: true
+  remote_user: vagrant
+  roles:
+    - copy-keys
+  
