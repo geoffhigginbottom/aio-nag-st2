@@ -18,7 +18,7 @@ nagios_nrpe_tarball: https://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe
 nagios_build_directory: /tmp
 nagios_password: nagiosadmin
 nagios_user: nagiosadmin
-nagios_admin_email: geoff.higginbottom@rackspace.co.uk
+nagios_admin_email: me@mydomain.local
 nagios_admin_name: 'Nagios Admin'
 nagios_host: nagios.local
 nagios_log_directory: /var/log
