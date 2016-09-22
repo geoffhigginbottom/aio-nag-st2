@@ -1,4 +1,14 @@
 ---
 - hosts: vagrant
-  roles:
-    - restart
+  
+  tasks:
+
+  - name: restart
+    become: true
+    command: shutdown -r now "Ansible reboot triggered"
+    async: 0
+    poll: 0
+    ignore_errors: true
+
+  - name: wait for reboot
+    pause: seconds=60

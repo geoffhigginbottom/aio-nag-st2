@@ -1,5 +1,5 @@
 ---
 - hosts: ntp-client
-    
+  become: true
   roles:
     - ntp-client

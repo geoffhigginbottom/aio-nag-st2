@@ -1,8 +1,7 @@
 ---
 
-- include: update.yml
 - include: copy-keys.yml
-- include: restart.yml
+- include: update.yml
 - include: ntp-server.yml
 - include: ntp-client.yml
 - include: stackstorm.yml

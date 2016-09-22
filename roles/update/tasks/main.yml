@@ -5,3 +5,4 @@
 
 - name: Upgrade
   apt: upgrade=dist
+  notify: restart

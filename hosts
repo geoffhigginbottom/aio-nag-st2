@@ -1,11 +1,11 @@
 [aio]
-aio ansible_ssh_host=127.0.0.1 ansible_ssh_port=2891 ansible_ssh_private_key_file=.vagrant/machines/aio/virtualbox/private_key
+aio ansible_ssh_host=172.29.236.100
 
 [nagios]
-nagios ansible_ssh_host=127.0.0.1 ansible_ssh_port=2892 ansible_ssh_private_key_file=.vagrant/machines/nagios/virtualbox/private_key
+nagios  ansible_ssh_host=172.29.236.101
 
 [stackstorm]
-stackstorm ansible_ssh_host=127.0.0.1 ansible_ssh_port=2893 ansible_ssh_private_key_file=.vagrant/machines/stackstorm/virtualbox/private_key
+stackstorm ansible_ssh_host=172.29.236.102
 
 [ntp-server:children]
 aio
