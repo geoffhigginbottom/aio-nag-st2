@@ -1,5 +1,5 @@
 ---
 - hosts: all_containers:hosts
-    
+  become: true
   roles:
     - st2-copy-key

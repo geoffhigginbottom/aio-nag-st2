@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
           # Defaults
           vbox.linked_clone = true
           vbox.name = "#{hostname}"
-          vbox.customize ["modifyvm", :id, "--groups", "/test"]
+          vbox.customize ["modifyvm", :id, "--groups", "/aio-nag-st2"]
           vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           vbox.customize ["modifyvm", :id, "--pae", "on"]
@@ -61,11 +61,13 @@ Vagrant.configure("2") do |config|
             ansible.limit = "all"
             ansible.playbook = "site.yml"
             ansible.groups = {
+              "aio" => ["aio"],
+              "nagios" => ["nagios"],
+              "stackstorm" => ["stackstorm"],
               "vagrant" => ["aio", "nagios", "stackstorm"],
               "ntp-server" => ["aio"],
               "ntp-client" => ["nagios", "stackstorm"],
-              "nagios-mon" => ["aio"],
-              "stackstorm" => ["stackstorm"]
+              "nagios-mon" => ["aio"]
             }
           end # do ansible
         end # if prefix == stackstorm

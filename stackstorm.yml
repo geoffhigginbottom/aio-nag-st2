@@ -1,5 +1,6 @@
 ---
 - hosts: stackstorm
+  become: true
   roles:
     - mongodb
     - rabbitmq

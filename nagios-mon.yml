@@ -1,5 +1,5 @@
 ---
 - hosts: nagios-mon
-    
+  become: true
   roles:
     - nagios-mon
