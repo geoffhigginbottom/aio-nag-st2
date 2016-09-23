@@ -17,8 +17,9 @@
 - name: Install nginx
   sudo: yes
   apt:
-    name: nginx=1.8.*
+    name: nginx #=1.8.*
     state: present
+  tags: nginx
 
 - name: Install latest st2web package
   sudo: yes
