@@ -300,9 +300,9 @@
     - xinetd_config
     - nrpe
 
-- name: Updte Nagios Config
+- name: Update Nagios Config
   lineinfile: dest=/usr/local/nagios/etc/nagios.cfg regexp="#cfg_dir=/usr/local/nagios/etc/servers" line="cfg_dir=/usr/local/nagios/etc/servers"
-  notify: nagios restart
+  notify: restart nagios
   tags: 
     - nagios_nrpe_config
     - nrpe
@@ -312,7 +312,7 @@
 
 - name: Create Server Folder
   file: path=/usr/local/nagios/etc/servers state=directory mode=0755 group=nagios owner=nagios
-  notify: nagios restart
+  notify: restart nagios
   tags: 
     - nagios_servers_folder
     - nagios_config
