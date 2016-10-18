@@ -24,7 +24,7 @@
     - { config_file: heat_engine_container_monitors.cfg }
     - { config_file: horizon_container_monitors.cfg }
     - { config_file: keystone_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: memcached_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
 
@@ -67,7 +67,7 @@
     - { config_file: heat_engine_container_monitors.cfg }
     - { config_file: horizon_container_monitors.cfg }
     - { config_file: keystone_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: memcached_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   tags:  

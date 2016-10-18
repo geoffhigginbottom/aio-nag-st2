@@ -117,14 +117,14 @@
     when: inventory_hostname | search("keystone_container")
 
 
-  # - name: Register xxx_container IP
-  #   set_fact:
-  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Register memcached_container IP
+    set_fact:
+      memcached_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("memcached_container")
 
-  # - name: Add xxx_container IP
-  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Add memcached_container IP
+    local_action: lineinfile dest=files/memcached_container_monitors.cfg regexp=address line="address                         {{ memcached_container_ip }}"
+    when: inventory_hostname | search("memcached_container")
 
 
   # - name: Register xxx_container IP
