@@ -169,6 +169,46 @@
     - containers
     - memcached
 
+- name: Add nrpe.d config files for neutron_agents container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: neutron_agents_container_commands.cfg }
+  when: inventory_hostname | search("neutron_agents_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - neutron_agents
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
+# - name: Add nrpe.d config files for Xxx container
+#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+#   with_items:
+#     - { config_file: xxx_container_commands.cfg }
+#   when: inventory_hostname | search("xxx_container")
+#   notify: restart nrpe
+#   tags: 
+#     - containers
+#     - xxx
+
 # - name: Add nrpe.d config files for Xxx container
 #   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
 #   with_items:
