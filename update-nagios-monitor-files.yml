@@ -137,6 +137,86 @@
     when: inventory_hostname | search("neutron_agents_container")
 
 
+  - name: Register neutron_server_container IP
+    set_fact:
+      neutron_server_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("neutron_server_container")
+
+  - name: Add neutron_server_container IP
+    local_action: lineinfile dest=files/neutron_server_container_monitors.cfg regexp=address line="address                         {{ neutron_server_container_ip }}"
+    when: inventory_hostname | search("neutron_server_container")
+
+
+  - name: Register nova_api_metadata_container IP
+    set_fact:
+      nova_api_metadata_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_api_metadata_container")
+
+  - name: Add nova_api_metadata_container IP
+    local_action: lineinfile dest=files/nova_api_metadata_container_monitors.cfg regexp=address line="address                         {{ nova_api_metadata_container_ip }}"
+    when: inventory_hostname | search("nova_api_metadata_container")
+
+
+  - name: Register nova_api_os_compute_container IP
+    set_fact:
+      nova_api_os_compute_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_api_os_compute_container")
+
+  - name: Add nova_api_os_compute_container IP
+    local_action: lineinfile dest=files/nova_api_os_compute_container_monitors.cfg regexp=address line="address                         {{ nova_api_os_compute_container_ip }}"
+    when: inventory_hostname | search("nova_api_os_compute_container")
+
+
+  - name: Register nova_cert _container IP
+    set_fact:
+      nova_cert_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_cert_container")
+
+  - name: Add nova_cert _container IP
+    local_action: lineinfile dest=files/nova_cert_container_monitors.cfg regexp=address line="address                         {{ nova_cert_container_ip }}"
+    when: inventory_hostname | search("nova_cert_container")
+
+
+  - name: Register nova_conductor_container IP
+    set_fact:
+      nova_conductor_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_conductor_container")
+
+  - name: Add nova_conductor_container IP
+    local_action: lineinfile dest=files/nova_conductor_container_monitors.cfg regexp=address line="address                         {{ nova_conductor_container_ip }}"
+    when: inventory_hostname | search("nova_conductor_container")
+
+
+  - name: Register nova_console_container IP
+    set_fact:
+      nova_console_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_console_container")
+
+  - name: Add nova_console_container IP
+    local_action: lineinfile dest=files/nova_console_container_monitors.cfg regexp=address line="address                         {{ nova_console_container_ip }}"
+    when: inventory_hostname | search("nova_console_container")
+
+
+  # - name: Register xxx_container IP
+  #   set_fact:
+  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
+  #   when: inventory_hostname | search("xxx_container")
+
+  # - name: Add xxx_container IP
+  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
+  #   when: inventory_hostname | search("xxx_container")
+
+
+  # - name: Register xxx_container IP
+  #   set_fact:
+  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
+  #   when: inventory_hostname | search("xxx_container")
+
+  # - name: Add xxx_container IP
+  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
+  #   when: inventory_hostname | search("xxx_container")
+
+
   # - name: Register xxx_container IP
   #   set_fact:
   #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"

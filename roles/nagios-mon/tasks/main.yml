@@ -179,25 +179,65 @@
     - containers
     - neutron_agents
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for neutron_server container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: neutron_server_container_commands.cfg }
+  when: inventory_hostname | search("neutron_server_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - neutron_server
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for nova_api_metadata container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_api_metadata_container_commands.cfg }
+  when: inventory_hostname | search("nova_api_metadata_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_api_metadata
+
+- name: Add nrpe.d config files for nova_api_os_compute container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_api_os_compute_container_commands.cfg }
+  when: inventory_hostname | search("nova_api_os_compute_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_api_os_compute
+
+- name: Add nrpe.d config files for nova_cert container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_cert_container_commands.cfg }
+  when: inventory_hostname | search("nova_cert_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_cert
+
+- name: Add nrpe.d config files for nova_conductor container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_conductor_container_commands.cfg }
+  when: inventory_hostname | search("nova_conductor_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_conductor
+
+- name: Add nrpe.d config files for nova_console container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_console_container_commands.cfg }
+  when: inventory_hostname | search("nova_console_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_console
 
 # - name: Add nrpe.d config files for Xxx container
 #   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
