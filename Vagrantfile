@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
             vbox.customize ['storageattach', :id, '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
           end # aio
           if prefix == "stackstorm"
-            vbox.customize ["modifyvm", :id, "--memory", 2048]
+            vbox.customize ["modifyvm", :id, "--memory", 3072]
             vbox.customize ["modifyvm", :id, "--cpus", 2]
           end # stackstorm
         end # box.vm virtualbox

@@ -39,7 +39,7 @@
     chdir: /opt/openstack-ansible
     creates: /opt/ansible_v*
   environment: 
-    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb host_data_disk_min_size_bytes=0
+    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb
   tags: bootstrap-ansible
   
 - name: Bootstrap AIO
@@ -48,7 +48,7 @@
     chdir: /opt/openstack-ansible
     creates: /etc/openstack_deploy
   environment: 
-    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb host_data_disk_min_size_bytes=0
+    BOOTSTRAP_OPTS: bootstrap_host_data_disk_device=sdb
   tags: bootstrap-aio
 
 # adds an exclusion to /etc/openstack_deploy/openstack_user_config.yml to ensure the IPs used by AIO, Nagios and Stackstorm VMs are not allocated to Containers
