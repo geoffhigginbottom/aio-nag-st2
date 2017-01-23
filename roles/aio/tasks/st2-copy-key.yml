@@ -10,7 +10,7 @@
     - st2
 
 - name: Copy 'st2-copy-key' Role
-  copy: src=roles/st2-copy-key/ dest=/opt/openstack-ansible/playbooks/roles/st2-copy-key/
+  copy: src=st2-copy-key/ dest=/opt/openstack-ansible/playbooks/roles/st2-copy-key/
   tags: 
     - copy_keys_role
     - st2_copy_key

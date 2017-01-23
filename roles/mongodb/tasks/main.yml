@@ -1,8 +1,12 @@
-- name: Install dependencies
-  sudo: true
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    state: present
-  with_items:
-    - mongodb-server
+---
+- name: Install mongodb on {{ ansible_distribution }}
+  include: mongodb_{{ ansible_pkg_mgr }}.yaml
+  tags: [databases, mongodb]
+
+- name: Start & Enable mongodb
+  become: yes
+  service:
+    name: mongod
+    state: started
+    enabled: yes
+  tags: [databases, mongodb]

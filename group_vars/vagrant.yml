@@ -5,7 +5,7 @@ ntp_server_ip: 172.29.236.100
 ntp_allow_ip_range: 172.29.236.0
 ntp_allow_mask: 255.255.252.0
 
-openstack_ansible_version: 13.3.6
+openstack_ansible_version: 13.3.12
 ansible_min_version: 2.1
 
 nagios_ipv4_ip: 172.29.236.101

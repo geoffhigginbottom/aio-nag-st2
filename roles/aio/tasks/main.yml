@@ -71,3 +71,10 @@
     chdir: /opt/openstack-ansible
     creates: /etc/openstack_deploy/ansible_facts
   tags: run-playbooks
+
+- include: roles/aio/tasks/update-ansible.yml
+- include: roles/aio/tasks/nagios-mon.yml
+- include: roles/aio/tasks/copy-keys.yml
+- include: roles/aio/tasks/st2-copy-key.yml
+- include: roles/aio/tasks/update-nagios-monitor-files.yml
+  
