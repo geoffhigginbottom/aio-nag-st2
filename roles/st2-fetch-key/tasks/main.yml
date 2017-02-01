@@ -1,6 +1,6 @@
 ---
 
 - name: Fetch Stanley Public Key
-  fetch: src=/home/stanley/.ssh/stanley_rsa.pub dest=roles/st2-copy-key/files/ flat=yes fail_on_missing=yes validate_checksum=yes
+  fetch: src=/home/stanley/.ssh/stanley_rsa.pub dest=roles/aio/files/st2-copy-key/files/ flat=yes fail_on_missing=yes validate_checksum=yes
   tags:  st2_fetch_key
  
