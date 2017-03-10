@@ -24,7 +24,7 @@
     - st2
 
 - name: Run st2-copy-key Playbook
-  shell: openstack-ansible st2-copy-key.yml chdir=/opt/openstack-ansible/playbooks/
+  shell: ansible-playbook st2-copy-key.yml chdir=/opt/openstack-ansible/playbooks/
   changed_when: false
   tags: 
     - run_st2_copy_key_playbook

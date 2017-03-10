@@ -14,7 +14,7 @@
     - nagios
     
 - name: Run Nagios-Mon Playbook
-  shell: openstack-ansible nagios-mon-containers.yml -e "nagios_ipv4_ip={{nagios_ipv4_ip}}" chdir=/opt/openstack-ansible/playbooks/
+  shell: ansible-playbook nagios-mon-containers.yml -e "nagios_ipv4_ip={{nagios_ipv4_ip}}" chdir=/opt/openstack-ansible/playbooks/
   changed_when: false
   tags: 
     - run_nagios_mon_playbook

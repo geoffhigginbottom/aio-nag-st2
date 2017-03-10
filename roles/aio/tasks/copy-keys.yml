@@ -34,7 +34,7 @@
     - nagios
 
 - name: Run copy-keys-containers Playbook
-  shell: openstack-ansible copy-keys-containers.yml chdir=/opt/openstack-ansible/playbooks/
+  shell: ansible-playbook copy-keys-containers.yml chdir=/opt/openstack-ansible/playbooks/
   changed_when: false
   tags: 
     - run_copy-keys-containers_playbook
