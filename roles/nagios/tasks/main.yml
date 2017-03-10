@@ -425,6 +425,11 @@
     - { config_file: nova_cert_container_monitors.cfg }
     - { config_file: nova_conductor_container_monitors.cfg }
     - { config_file: nova_console_container_monitors.cfg }
+    - { config_file: nova_scheduler_container_monitors.cfg }
+    - { config_file: rabbit_mq_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
+    #- { config_file: xxx_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }

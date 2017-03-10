@@ -239,25 +239,25 @@
     - containers
     - nova_console
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for nova_scheduler container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: nova_scheduler_container_commands.cfg }
+  when: inventory_hostname | search("nova_scheduler_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - nova_scheduler
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for rabbit_mq container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: rabbit_mq_container_commands.cfg }
+  when: inventory_hostname | search("rabbit_mq_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - rabbit_mq
 
 # - name: Add nrpe.d config files for Xxx container
 #   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}

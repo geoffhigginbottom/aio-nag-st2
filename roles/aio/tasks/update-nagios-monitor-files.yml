@@ -32,8 +32,8 @@
     - { config_file: nova_cert_container_monitors.cfg }
     - { config_file: nova_conductor_container_monitors.cfg }
     - { config_file: nova_console_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: nova_scheduler_container_monitors.cfg }
+    - { config_file: rabbit_mq_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
@@ -46,15 +46,15 @@
 
 # This is the playbook which will run on the AIO VM to update the files
 - name: Copy update-nagios-monitor-files.yml
-  copy: src=update-nagios-monitor-files.yml dest=/opt/openstack-ansible/playbooks/update-nagios-monitor-files.yml
+  copy: src=aio-update-nagios-monitor-files.yml dest=/opt/openstack-ansible/playbooks/aio-update-nagios-monitor-files.yml
   tags: 
-    - copy_update_nagios_monitor_files_yml
+    - copy_aio_update_nagios_monitor_files_yml
     - nagios_monitoring_files
     - update_nagios_monitoring_files
     - nagios
 
 - name: Run update-nagios-monitor-files.yml Playbook
-  shell: openstack-ansible update-nagios-monitor-files.yml chdir=/opt/openstack-ansible/playbooks/
+  shell: ansible-playbook aio-update-nagios-monitor-files.yml chdir=/opt/openstack-ansible/playbooks/
   changed_when: false
   tags: 
     - run_update_nagios_monitor_files_playbook
@@ -85,8 +85,8 @@
     - { config_file: nova_cert_container_monitors.cfg }
     - { config_file: nova_conductor_container_monitors.cfg }
     - { config_file: nova_console_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: nova_scheduler_container_monitors.cfg }
+    - { config_file: rabbit_mq_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
