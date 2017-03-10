@@ -197,6 +197,25 @@
     when: inventory_hostname | search("nova_console_container")
 
 
+  - name: Register nova_scheduler_container IP
+    set_fact:
+      nova_scheduler_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("nova_scheduler_container")
+
+  - name: Add nova_scheduler_container IP
+    local_action: lineinfile dest=files/nova_scheduler_container_monitors.cfg regexp=address line="address                         {{ nova_scheduler_container_ip }}"
+    when: inventory_hostname | search("nova_scheduler_container")
+
+
+  - name: Register rabbit_mq_container IP
+    set_fact:
+      rabbit_mq_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("rabbit_mq_container")
+
+  - name: Add rabbit_mq_container IP
+    local_action: lineinfile dest=files/rabbit_mq_container_monitors.cfg regexp=address line="address                         {{ rabbit_mq_container_ip }}"
+    when: inventory_hostname | search("rabbit_mq_container")
+
   # - name: Register xxx_container IP
   #   set_fact:
   #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
