@@ -13,3 +13,5 @@ log/
 roles/st2-copy-key/files/stanley_rsa.pub
 HISTORY.txt
 README.txt
+
+*.retry

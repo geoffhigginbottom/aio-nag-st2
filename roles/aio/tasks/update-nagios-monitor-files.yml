@@ -34,7 +34,9 @@
     - { config_file: nova_console_container_monitors.cfg }
     - { config_file: nova_scheduler_container_monitors.cfg }
     - { config_file: rabbit_mq_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: repo_container_monitors.cfg }
+    - { config_file: rsyslog_container_monitors.cfg }
+    - { config_file: swift_proxy_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
@@ -87,8 +89,9 @@
     - { config_file: nova_console_container_monitors.cfg }
     - { config_file: nova_scheduler_container_monitors.cfg }
     - { config_file: rabbit_mq_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
-  #  - { config_file: xxx_container_monitors.cfg }
+    - { config_file: repo_container_monitors.cfg }
+    - { config_file: rsyslog_container_monitors.cfg }
+    - { config_file: swift_proxy_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }
   #  - { config_file: xxx_container_monitors.cfg }

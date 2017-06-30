@@ -14,7 +14,7 @@ nagios_tarball: https://assets.nagios.com/downloads/nagioscore/releases/nagios-{
 nagios_plugins_version: 2.1.2
 nagios_plugin_tarball: https://www.nagios-plugins.org/download/nagios-plugins-{{nagios_plugins_version}}.tar.gz
 nagios_nrpe_version: 2.15
-nagios_nrpe_tarball: https://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe-{{nagios_nrpe_version}}/nrpe-{{nagios_nrpe_version}}.tar.gz
+nagios_nrpe_tarball: https://sourceforge.net/projects/nagios/files/nrpe-2.x/nrpe-{{nagios_nrpe_version}}/nrpe-{{nagios_nrpe_version}}.tar.gz/download
 nagios_build_directory: /tmp
 nagios_password: nagiosadmin
 nagios_user: nagiosadmin

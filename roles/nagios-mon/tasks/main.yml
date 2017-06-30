@@ -259,25 +259,35 @@
     - containers
     - rabbit_mq
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for Repo container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: repo_container_commands.cfg }
+  when: inventory_hostname | search("repo_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - repo
 
-# - name: Add nrpe.d config files for Xxx container
-#   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
-#   with_items:
-#     - { config_file: xxx_container_commands.cfg }
-#   when: inventory_hostname | search("xxx_container")
-#   notify: restart nrpe
-#   tags: 
-#     - containers
-#     - xxx
+- name: Add nrpe.d config files for rsyslog container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: rsyslog_container_commands.cfg }
+  when: inventory_hostname | search("rsyslog_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - rsyslog
+
+- name: Add nrpe.d config files for Swift Proxy container
+  template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}
+  with_items:
+    - { config_file: swift_proxy_container_commands.cfg }
+  when: inventory_hostname | search("swift_proxy_container")
+  notify: restart nrpe
+  tags: 
+    - containers
+    - swift_proxy
 
 # - name: Add nrpe.d config files for Xxx container
 #   template: src={{ item.config_file }} dest=/etc/nagios/nrpe.d/{{ item.config_file }}

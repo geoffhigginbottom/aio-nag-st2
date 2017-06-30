@@ -227,7 +227,7 @@
 ### NRPE ###
 
 - name: Tarball Test
-  stat: path={{nagios_build_directory}}/{{nagios_nrpe_tarball}}.tar.gz
+  stat: path={{nagios_build_directory}}/nrpe-{{nagios_nrpe_version}}.tar.gz
   register: st
   tags: 
     - nrpe_tarball
@@ -427,11 +427,9 @@
     - { config_file: nova_console_container_monitors.cfg }
     - { config_file: nova_scheduler_container_monitors.cfg }
     - { config_file: rabbit_mq_container_monitors.cfg }
-    #- { config_file: xxx_container_monitors.cfg }
-    #- { config_file: xxx_container_monitors.cfg }
-    #- { config_file: xxx_container_monitors.cfg }
-    #- { config_file: xxx_container_monitors.cfg }
-    #- { config_file: xxx_container_monitors.cfg }
+    - { config_file: repo_container_monitors.cfg }
+    - { config_file: rsyslog_container_monitors.cfg }
+    - { config_file: swift_proxy_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }
     #- { config_file: xxx_container_monitors.cfg }

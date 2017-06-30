@@ -216,34 +216,35 @@
     local_action: lineinfile dest=files/rabbit_mq_container_monitors.cfg regexp=address line="address                         {{ rabbit_mq_container_ip }}"
     when: inventory_hostname | search("rabbit_mq_container")
 
-  # - name: Register xxx_container IP
-  #   set_fact:
-  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
-  #   when: inventory_hostname | search("xxx_container")
 
-  # - name: Add xxx_container IP
-  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Register repo_container IP
+    set_fact:
+      repo_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("repo_container")
 
-
-  # - name: Register xxx_container IP
-  #   set_fact:
-  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
-  #   when: inventory_hostname | search("xxx_container")
-
-  # - name: Add xxx_container IP
-  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Add repo_container IP
+    local_action: lineinfile dest=files/repo_container_monitors.cfg regexp=address line="address                         {{ repo_container_ip }}"
+    when: inventory_hostname | search("repo_container")
 
 
-  # - name: Register xxx_container IP
-  #   set_fact:
-  #     xxx_container_ip: "{{ ansible_eth1.ipv4.address }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Register rsyslog_container IP
+    set_fact:
+      rsyslog_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("rsyslog_container")
 
-  # - name: Add xxx_container IP
-  #   local_action: lineinfile dest=files/xxx_container_monitors.cfg regexp=address line="address                         {{ xxx_container_ip }}"
-  #   when: inventory_hostname | search("xxx_container")
+  - name: Add rsyslog_container IP
+    local_action: lineinfile dest=files/rsyslog_container_monitors.cfg regexp=address line="address                         {{ rsyslog_container_ip }}"
+    when: inventory_hostname | search("rsyslog_container")
+
+
+  - name: Register swift_proxy_container IP
+    set_fact:
+      swift_proxy_container_ip: "{{ ansible_eth1.ipv4.address }}"
+    when: inventory_hostname | search("swift_proxy_container")
+
+  - name: Add swift_proxy_container IP
+    local_action: lineinfile dest=files/swift_proxy_container_monitors.cfg regexp=address line="address                         {{ swift_proxy_container_ip }}"
+    when: inventory_hostname | search("swift_proxy_container")
 
 
   # - name: Register xxx_container IP
