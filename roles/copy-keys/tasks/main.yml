@@ -6,3 +6,7 @@
 - name: Add Authorised Key Root User
   authorized_key: user=root key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   tags: auth_key
+
+- name: Add Authorised Key Root User
+  authorized_key: user=vagrant key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  tags: auth_key

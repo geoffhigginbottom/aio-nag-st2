@@ -1,5 +1,5 @@
 [aio]
-aio ansible_ssh_host=172.29.236.100
+aio ansible_ssh_host=172.17.0.100
 
 [nagios]
 nagios  ansible_ssh_host=172.29.236.101

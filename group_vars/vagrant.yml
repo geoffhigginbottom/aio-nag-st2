@@ -26,9 +26,10 @@ nagios_ssl_cert_pem: /etc/apache2/ssl/nagios.pem
 nagios_ssl_cert_key: /etc/apache2/ssl/nagios.key
 
 st2_api_key:
+st2_ipv4_ip: 172.29.236.102 
 st2_username: testu
 st2_password: testp
-st2_api_base_url: https://172.29.236.102/api/v1/
-st2_auth_base_url: https://172.29.236.102/auth/v1/
+st2_api_base_url: https://{{st2_ipv4_ip}}/api/v1/
+st2_auth_base_url: https://{{st2_ipv4_ip}}/auth/v1/
 st2_unauthed: False
 st2_ssl_verify: False

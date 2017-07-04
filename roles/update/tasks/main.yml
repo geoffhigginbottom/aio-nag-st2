@@ -5,4 +5,86 @@
 
 - name: Upgrade
   apt: upgrade=dist
-  notify: restart
+  tags: 
+    - upgrade
+
+- name: Is Reboot Required
+  stat: 
+    path: /var/run/reboot-required.pkgs
+  register: stat_result
+  tags:
+    - upgrade
+
+- name: Test stat results
+  debug:
+    var: stat_result
+    verbosity: 2
+  tags:
+    - upgrade
+
+- name: Debug
+  debug:
+    msg: "Reboot required"
+  when: stat_result.stat.exists == True
+  tags:
+    - upgrade
+
+- name: Debug IPs
+  debug: 
+    var: ansible_all_ipv4_addresses
+    verbosity: 2
+
+- name: Debug Ansible SSH Host IP
+  debug: 
+    var: ansible_ssh_host
+    verbosity: 2
+
+- name: restart
+  shell: sleep 2 && shutdown -r now "Ansible triggered restart"
+  async: 1
+  poll: 0
+  changed_when: true
+  when: stat_result.stat.exists == True
+
+- name: reboot debug
+  debug:
+    var: rebooted
+    verbosity: 2
+
+- name: wait for aio reboot
+  wait_for:
+    host: '{{ ansible_eth2.ipv4.address }}'
+    state: started
+    port: 22
+    delay: 5
+    timeout: 20
+  become: false
+  delegate_to: 127.0.0.1
+  when: (inventory_hostname | search("aio")) and (stat_result.stat.exists == True)
+
+- name: wait for nagios reboot
+  wait_for:
+    host: '{{ ansible_eth1.ipv4.address }}'
+    state: started
+    port: 22
+    delay: 5
+    timeout: 20
+  become: false
+  delegate_to: 127.0.0.1
+  when: (inventory_hostname | search("nagios")) and (stat_result.stat.exists == True)
+
+- name: Wait for Stackstorm to reboot
+  local_action: wait_for host={{ ansible_hostname }} state=started delay=5 timeout=20
+  become: false
+  when: (inventory_hostname | search("stackstorm")) and (stat_result.stat.exists == True)
+
+# - name: wait for stackstorm reboot # alternate method to ssh test
+#   wait_for:
+#     host: '{{ ansible_eth1.ipv4.address }}'
+#     state: started
+#     port: 22
+#     delay: 5
+#     timeout: 20
+#   become: false
+#   delegate_to: 127.0.0.1
+#   when: (inventory_hostname | search("stackstorm")) and (stat_result.stat.exists == True)
