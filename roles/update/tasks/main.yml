@@ -45,6 +45,8 @@
   poll: 0
   changed_when: true
   when: stat_result.stat.exists == True
+  tags:
+    - upgrade
 
 - name: reboot debug
   debug:
